@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Naziv restorana — jelovnik, radno vrijeme i rezervacije</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --sea: #123C46;
+    --sea-deep: #0C2B33;
+    --stone: #EDEFEA;
+    --ink: #1B2326;
+    --muted: #55656A;
+    --oil: #C79A2B;
+    --white: #FFFFFF;
+    --line: #CBD2CD;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--stone); color: var(--ink); line-height: 1.65; font-size: 1.05rem; }
+  h1, h2, h3 { font-family: 'Young Serif', Georgia, serif; font-weight: 400; line-height: 1.12; letter-spacing: -0.01em; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--oil); outline-offset: 3px; }
+
+  .demo-bar { background: var(--oil); color: var(--sea-deep); font-size: 0.85rem; text-align: center; padding: 0.45rem 1rem; font-weight: 500; }
+
+  header { display: flex; justify-content: space-between; align-items: center; padding: 1.4rem clamp(1.25rem, 5vw, 4rem); }
+  .brand { font-family: 'Young Serif', serif; font-size: 1.35rem; text-decoration: none; }
+  nav { display: flex; gap: 1.75rem; font-size: 0.95rem; }
+  nav a { text-decoration: none; padding: 0.25rem 0; border-bottom: 2px solid transparent; }
+  nav a:hover { border-bottom-color: var(--oil); }
+
+  /* HERO */
+  .hero { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(2rem, 6vw, 5rem); align-items: center; padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem); max-width: 1240px; margin: 0 auto; }
+  .hero h1 { font-size: clamp(2.6rem, 6.5vw, 5rem); margin-bottom: 1.4rem; max-width: 12ch; }
+  .hero p.lead { color: var(--muted); max-width: 44ch; margin-bottom: 2rem; }
+  .hero-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; }
+  .btn { display: inline-block; background: var(--sea); color: var(--white); padding: 0.95rem 1.7rem; border-radius: 4px; text-decoration: none; font-weight: 700; border: 2px solid var(--sea); cursor: pointer; font-family: inherit; font-size: 1rem; transition: background 0.2s; }
+  .btn:hover { background: var(--sea-deep); }
+  .btn.ghost { background: transparent; color: var(--sea); }
+  .btn.ghost:hover { background: var(--sea); color: var(--white); }
+
+  /* Luk — dnevna ponuda */
+  .arch { background: var(--sea); color: var(--stone); border-radius: 999px 999px 6px 6px; padding: clamp(3.5rem, 9vw, 5.5rem) clamp(1.5rem, 4vw, 2.5rem) 2.5rem; text-align: center; max-width: 380px; justify-self: center; width: 100%; box-shadow: inset 0 0 0 10px var(--sea), inset 0 0 0 12px rgba(237,239,234,0.35); }
+  .arch h2 { font-size: 1.7rem; margin-bottom: 0.35rem; }
+  .arch .day { color: var(--oil); font-weight: 700; margin-bottom: 1.4rem; }
+  .arch ul { list-style: none; text-align: left; }
+  .arch li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.65rem 0; border-top: 1px solid rgba(237,239,234,0.25); font-size: 0.98rem; }
+  .arch li span:last-child { color: var(--oil); font-weight: 700; white-space: nowrap; }
+
+  section { padding: clamp(3rem, 7vw, 5.5rem) clamp(1.25rem, 5vw, 4rem); }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .section-head { margin-bottom: 2.5rem; max-width: 40rem; }
+  .section-head h2 { font-size: clamp(2rem, 4.5vw, 3rem); margin-bottom: 0.6rem; }
+  .section-head p { color: var(--muted); }
+
+  /* O NAMA */
+  .about { background: var(--white); }
+  .about .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 5rem); align-items: start; }
+  .about h2 { font-size: clamp(2rem, 4.5vw, 3rem); }
+  .about p + p { margin-top: 1rem; }
+  .about p { color: var(--muted); }
+
+  /* JELOVNIK */
+  .menu-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem clamp(2rem, 6vw, 5rem); }
+  .menu-group h3 { font-size: 1.5rem; margin: 1.5rem 0 0.4rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--ink); }
+  .dish { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.7rem 0; }
+  .dish .name { font-weight: 500; }
+  .dish .dots { flex: 1; border-bottom: 2px dotted var(--line); transform: translateY(-4px); min-width: 1rem; }
+  .dish .price { font-weight: 700; white-space: nowrap; }
+  .dish small { display: block; color: var(--muted); font-size: 0.88rem; font-weight: 400; }
+
+  /* RADNO VRIJEME */
+  .info { background: var(--white); }
+  .info .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 5rem); }
+  .hours { list-style: none; max-width: 22rem; }
+  .hours li { display: flex; justify-content: space-between; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
+  .hours li strong { font-weight: 500; }
+  .info address { font-style: normal; color: var(--muted); }
+  .info address a { color: var(--sea); font-weight: 700; }
+  .map-box { margin-top: 1.4rem; background: var(--stone); border: 1px dashed var(--muted); border-radius: 6px; padding: 2.2rem 1rem; text-align: center; color: var(--muted); font-size: 0.92rem; }
+
+  /* REZERVACIJA */
+  .reserve { background: var(--sea); color: var(--stone); }
+  .reserve .section-head p { color: rgba(237,239,234,0.78); }
+  form.rez { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem 1.25rem; max-width: 720px; }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-size: 0.92rem; font-weight: 500; }
+  input, select, textarea { font-family: inherit; font-size: 1rem; padding: 0.8rem 0.9rem; border-radius: 4px; border: 2px solid transparent; background: var(--stone); color: var(--ink); width: 100%; }
+  textarea { resize: vertical; min-height: 90px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--oil); }
+  .btn.gold { background: var(--oil); border-color: var(--oil); color: var(--sea-deep); }
+  .btn.gold:hover { background: #d8aa38; }
+  .btn:disabled { opacity: 0.6; cursor: wait; }
+  .fine { font-size: 0.85rem; color: rgba(237,239,234,0.75); }
+  .fine button { background: none; border: none; color: var(--oil); text-decoration: underline; cursor: pointer; font: inherit; }
+  #rez-ok { display: none; max-width: 720px; border: 2px solid var(--oil); border-radius: 6px; padding: 1.6rem; }
+  #rez-ok h3 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+  #rez-err { color: #FFC9BF; font-size: 0.95rem; min-height: 1.2em; }
+
+  footer { padding: 2.2rem clamp(1.25rem, 5vw, 4rem); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; font-size: 0.9rem; color: var(--muted); }
+  footer a { color: var(--sea); }
+
+  dialog { border: none; border-radius: 8px; max-width: 560px; width: calc(100% - 2rem); padding: 2rem; color: var(--ink); background: var(--white); }
+  dialog::backdrop { background: rgba(12,43,51,0.6); }
+  dialog h2 { font-size: 1.6rem; margin-bottom: 1rem; }
+  dialog p { color: var(--muted); font-size: 0.95rem; margin-bottom: 0.8rem; }
+
+  @media (max-width: 820px) {
+    .hero, .about .wrap, .info .wrap, .menu-cols { grid-template-columns: 1fr; }
+    .hero h1 { max-width: none; }
+    nav { gap: 1rem; font-size: 0.88rem; }
+    form.rez { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- DEMO TRAKA: obrisati prije isporuke klijentu -->
+<div class="demo-bar">Ovo je demo prijedlog. Jela, cijene i podaci su primjeri i bit će zamijenjeni vašima.</div>
+
+<header>
+  <a class="brand" href="#">Naziv restorana</a>
+  <nav aria-label="Glavni izbornik">
+    <a href="#jelovnik">Jelovnik</a>
+    <a href="#kontakt">Radno vrijeme</a>
+    <a href="#rezervacija">Rezervacija</a>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <div>
+      <h1>Domaća kuhinja, svježe svaki dan.</h1>
+      <p class="lead">Jela pripremljena od lokalnih namirnica, u opuštenoj atmosferi. Pogledajte jelovnik ili nam pošaljite upit za stol.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#rezervacija">Rezerviraj stol</a>
+        <a class="btn ghost" href="#jelovnik">Pogledaj jelovnik</a>
+      </div>
+    </div>
+    <aside class="arch" aria-label="Dnevna ponuda">
+      <h2>Dnevna ponuda</h2>
+      <p class="day">Primjer: ponedjeljak – petak, 12:00 – 16:00</p>
+      <ul>
+        <li><span>Juha dana</span><span>3,50 €</span></li>
+        <li><span>Glavno jelo dana</span><span>9,00 €</span></li>
+        <li><span>Desert dana</span><span>3,00 €</span></li>
+      </ul>
+    </aside>
+  </div>
+
+  <section class="about" id="o-nama">
+    <div class="wrap">
+      <h2>Mjesto na koje se rado vraća.</h2>
+      <div>
+        <p>Ovdje stavljamo kratku priču vašeg restorana: tko ga vodi, otkad radi i po čemu se razlikuje. Dvije-tri rečenice dovoljne su da gost dobije osjećaj prije nego što dođe.</p>
+        <p>Možemo dodati i fotografije prostora i jela, ako ih imate ili ako ih dogovorimo za snimanje.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="jelovnik">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Jelovnik</h2>
+        <p>Gosti najčešće prvo traže jelovnik. Ovdje je uvijek aktualan i čita se jednako dobro na mobitelu.</p>
+      </div>
+      <div class="menu-cols">
+        <div class="menu-group">
+          <h3>Predjela</h3>
+          <div class="dish"><div class="name">Pršut i sir<small>domaći pršut, ovčji sir, maslinovo ulje</small></div><span class="dots"></span><span class="price">9,00 €</span></div>
+          <div class="dish"><div class="name">Juha od povrća<small>sezonsko povrće</small></div><span class="dots"></span><span class="price">4,00 €</span></div>
+          <div class="dish"><div class="name">Miješana salata<small>s domaćim dresingom</small></div><span class="dots"></span><span class="price">5,00 €</span></div>
+          <h3>Deserti</h3>
+          <div class="dish"><div class="name">Palačinke<small>marmelada ili čokolada</small></div><span class="dots"></span><span class="price">4,50 €</span></div>
+          <div class="dish"><div class="name">Domaći kolač dana</div><span class="dots"></span><span class="price">3,50 €</span></div>
+        </div>
+        <div class="menu-group">
+          <h3>Glavna jela</h3>
+          <div class="dish"><div class="name">Teleći medaljoni<small>vrhnje, gljive, njoki</small></div><span class="dots"></span><span class="price">17,00 €</span></div>
+          <div class="dish"><div class="name">Pečena riba dana<small>blitva, krumpir</small></div><span class="dots"></span><span class="price">16,00 €</span></div>
+          <div class="dish"><div class="name">Domaći njoki s umakom<small>vegetarijansko</small></div><span class="dots"></span><span class="price">10,00 €</span></div>
+          <h3>Pića</h3>
+          <div class="dish"><div class="name">Kava</div><span class="dots"></span><span class="price">1,60 €</span></div>
+          <div class="dish"><div class="name">Domaći sok</div><span class="dots"></span><span class="price">2,50 €</span></div>
+          <div class="dish"><div class="name">Vino, čaša<small>bijelo ili crno</small></div><span class="dots"></span><span class="price">3,00 €</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="info" id="kontakt">
+    <div class="wrap">
+      <div>
+        <div class="section-head" style="margin-bottom:1.5rem"><h2>Radno vrijeme</h2></div>
+        <ul class="hours">
+          <li><strong>Ponedjeljak – petak</strong><span>10:00 – 22:00</span></li>
+          <li><strong>Subota</strong><span>12:00 – 23:00</span></li>
+          <li><strong>Nedjelja</strong><span>12:00 – 18:00</span></li>
+        </ul>
+        <p class="fine" style="color:var(--muted);margin-top:0.8rem">Radno vrijeme je primjer.</p>
+      </div>
+      <div>
+        <div class="section-head" style="margin-bottom:1.5rem"><h2>Kako do nas</h2></div>
+        <address>
+          Ulica i kućni broj, Grad<br />
+          Telefon: <a href="tel:+385000000000">+385 00 000 0000</a><br />
+          E-mail: <a href="mailto:info@primjer.hr">info@primjer.hr</a>
+        </address>
+        <div class="map-box">Ovdje se prikazuje Google karta s lokacijom restorana.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reserve" id="rezervacija">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Pošaljite upit za stol</h2>
+        <p>Ispunite obrazac i javit ćemo vam se radi potvrde. Rezervacija vrijedi tek nakon naše potvrde.</p>
+      </div>
+
+      <form class="rez" id="rez-form" novalidate>
+        <div class="field"><label for="f-name">Ime i prezime</label><input id="f-name" type="text" autocomplete="name" required /></div>
+        <div class="field"><label for="f-phone">Broj telefona</label><input id="f-phone" type="tel" autocomplete="tel" required /></div>
+        <div class="field"><label for="f-date">Datum</label><input id="f-date" type="date" required /></div>
+        <div class="field"><label for="f-time">Vrijeme</label><select id="f-time" required></select></div>
+        <div class="field"><label for="f-guests">Broj osoba</label><select id="f-guests" required></select></div>
+        <div class="field"><label for="f-email">E-mail (neobavezno)</label><input id="f-email" type="email" autocomplete="email" /></div>
+        <div class="field full"><label for="f-note">Napomena (neobavezno)</label><textarea id="f-note" placeholder="Npr. rođendan, dječja stolica, alergije"></textarea></div>
+        <div class="field full">
+          <button class="btn gold" id="rez-btn" type="submit">Pošalji upit</button>
+          <p id="rez-err" role="alert"></p>
+          <p class="fine">Podatke koristimo samo za potvrdu rezervacije. <button type="button" onclick="document.getElementById('dlg').showModal()">Politika privatnosti</button></p>
+        </div>
+      </form>
+
+      <div id="rez-ok" role="status">
+        <h3>Upit je poslan.</h3>
+        <p>Javit ćemo vam se telefonom ili porukom radi potvrde. Rezervacija vrijedi tek nakon potvrde restorana.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Naziv restorana</span>
+  <span>Izradu stranice naručite na <a href="mailto:webdev4812@proton.me">webdev4812@proton.me</a></span>
+</footer>
+
+<dialog id="dlg">
+  <h2>Politika privatnosti</h2>
+  <p>Kada pošaljete obrazac za rezervaciju, prikupljamo ime, telefon, datum, vrijeme, broj osoba te, ako ih upišete, e-mail i napomenu.</p>
+  <p>Podatke koristimo isključivo za potvrdu i organizaciju vaše rezervacije. Ne prodajemo ih i ne dijelimo s trećima, osim usluge koja prosljeđuje obrazac e-mailom restoranu.</p>
+  <p>Podatke čuvamo samo koliko je potrebno. Za pristup, ispravak ili brisanje podataka javite se restoranu na kontakt naveden na stranici.</p>
+  <button class="btn" onclick="document.getElementById('dlg').close()">Zatvori</button>
+</dialog>
+
+<script>
+  // Termini svakih 30 min
+  const timeSel = document.getElementById('f-time');
+  for (let h = 12; h <= 21; h++) for (const m of ['00','30']) {
+    if (h === 21 && m === '30') continue;
+    const o = document.createElement('option'); o.value = o.textContent = h + ':' + m; timeSel.appendChild(o);
+  }
+  const gSel = document.getElementById('f-guests');
+  for (let i = 1; i <= 10; i++) { const o = document.createElement('option'); o.value = i; o.textContent = i; gSel.appendChild(o); }
+  const more = document.createElement('option'); more.value = '10+'; more.textContent = 'Više od 10 (navedite u napomeni)'; gSel.appendChild(more);
+  document.getElementById('f-date').min = new Date().toISOString().split('T')[0];
+
+  document.getElementById('rez-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const v = id => document.getElementById(id).value.trim();
+    const err = document.getElementById('rez-err');
+    err.textContent = '';
+    if (!v('f-name') || !v('f-phone') || !v('f-date')) { err.textContent = 'Upišite ime, broj telefona i datum.'; return; }
+    const btn = document.getElementById('rez-btn');
+    btn.disabled = true; btn.textContent = 'Slanje…';
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: 'ef3e6639-dea6-4a7f-a7dc-dca404badfab',
+          subject: 'Novi upit za rezervaciju stola',
+          from_name: 'Obrazac za rezervaciju',
+          name: v('f-name'), phone: v('f-phone'), date: v('f-date'), time: v('f-time'),
+          guests: v('f-guests'), email: v('f-email') || 'nije navedeno', note: v('f-note') || '-'
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('rez-form').style.display = 'none';
+        document.getElementById('rez-ok').style.display = 'block';
+      } else { throw new Error(); }
+    } catch {
+      btn.disabled = false; btn.textContent = 'Pošalji upit';
+      err.textContent = 'Slanje nije uspjelo. Pokušajte ponovo ili nas nazovite.';
+    }
+  });
+</script>
+</body>
+</html>
